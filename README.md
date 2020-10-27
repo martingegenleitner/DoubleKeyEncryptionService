@@ -10,7 +10,7 @@ urlFragment: ""
 
 # Source code repository for the Double Key Encryption (DKE) service for Microsoft 365
 
-Use this repository to download the DKE service. Once you download, install, and set up the DKE service, you keep your keys under your control. This way, your keys are never exposed to Microsoft. Follow the instructions at https://aka.ms/dke to get started.
+Use this repository to download the DKE service. Once you download, install, and set up the DKE service, you keep your keys under your control. This way, your keys are never exposed to Microsoft. Follow the instructions at <https://aka.ms/dke> to get started.
 
 ## Warning
 
@@ -27,11 +27,37 @@ IMPORTANT NOTICE: This project includes code for encryption libraries. You are r
 | `LICENSE`            | The license for the DKE service software.                                               |
 | `SECURITY.md`        | Describes how to contact Microsoft to report a security vulnerability.                  |
 
+## Generating key on KSP
+
+```shell
+# Test if KSP is registered successfully
+certutil -csp "SafeNet Key Storage Provider" -csptest
+
+# Create a simple RSA4096-KeyPair with certreq
+$inf_content = @"
+[Version]
+Signature="$Windows NT$"
+[NewRequest]
+HashAlgorithm=sha512
+KeyAlgorithm=RSA
+KeyLength=4096
+MachineKeySet=true
+Subject="CN=my key"
+ProviderName="SafeNet Key Storage Provider"
+RequestType=PKCS10
+"@
+$inf_content | Out-File dummy-csr.inf
+certreq -new dummy-csr.inf dummy.csr
+
+# List created key. Take the id and place it into appsettings.json as keyId
+certutil -csp "SafeNet Key Storage Provider" -key
+```
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+the rights to use your contribution. For details, visit <https://cla.opensource.microsoft.com>.
 
 When you submit a pull request, a CLA bot will automatically determine whether you need to provide
 a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
